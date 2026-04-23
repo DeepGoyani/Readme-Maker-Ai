@@ -1,32 +1,52 @@
-import { useState, startTransition } from "react";
+import { useState, startTransition, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useLocation, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Github, Loader2 } from "lucide-react";
 
 const Login = () => {
-  const { user, isLoading, signIn } = useAuth();
+  const { user, isLoading: authLoading, signIn, handleGitHubCallback } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as any)?.from?.pathname || "/dashboard";
   const [error, setError] = useState<string | null>(null);
   const [shaking, setShaking] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  // Handle GitHub OAuth callback
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const code = params.get('code');
+    const errorParam = params.get('error');
+
+    if (errorParam) {
+      setError(`GitHub authentication error: ${errorParam}`);
+      return;
+    }
+
+    if (code && !isProcessing && !user) {
+      setIsProcessing(true);
+      handleGitHubCallback(code)
+        .then(() => {
+          startTransition(() => {
+            navigate('/dashboard', { replace: true });
+          });
+        })
+        .catch((err: Error) => {
+          setError(err.message || "Authentication failed. Please try again.");
+          setShaking(true);
+          setTimeout(() => setShaking(false), 600);
+          setIsProcessing(false);
+        });
+    }
+  }, [location, handleGitHubCallback, navigate, user, isProcessing]);
 
   if (user) return <Navigate to="/dashboard" replace />;
 
-  const handleSignIn = async () => {
-    if (isLoading) return;
+  const handleSignIn = () => {
+    if (authLoading || isProcessing) return;
     setError(null);
-    try {
-      await signIn();
-      startTransition(() => {
-        navigate(from, { replace: true });
-      });
-    } catch (e) {
-      setError("Authentication failed. Please try again.");
-      setShaking(true);
-      setTimeout(() => setShaking(false), 600);
-    }
+    signIn();
   };
 
   return (
@@ -51,16 +71,16 @@ const Login = () => {
         </p>
 
         <motion.button
-          whileHover={{ scale: isLoading ? 1 : 1.02 }}
-          whileTap={{ scale: isLoading ? 1 : 0.96 }}
+          whileHover={{ scale: (authLoading || isProcessing) ? 1 : 1.02 }}
+          whileTap={{ scale: (authLoading || isProcessing) ? 1 : 0.96 }}
           onClick={handleSignIn}
-          disabled={isLoading}
+          disabled={authLoading || isProcessing}
           className="clay-button w-full py-3.5 font-display font-semibold text-base flex items-center justify-center gap-2 disabled:opacity-70 disabled:pointer-events-none"
         >
-          {isLoading ? (
+          {authLoading || isProcessing ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" />
-              Connecting...
+              Processing...
             </>
           ) : (
             <>
