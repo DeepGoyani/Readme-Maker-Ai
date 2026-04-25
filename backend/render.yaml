@@ -1,0 +1,40 @@
+# Render Deployment Configuration
+
+services:
+  # Backend Service
+  - type: web
+    name: readme-maker-ai-backend
+    env: node
+    plan: free
+    buildCommand: "npm install && npm run build"
+    startCommand: "npm start"
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5003
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: GITHUB_CLIENT_ID
+        sync: false
+      - key: GITHUB_CLIENT_SECRET
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+
+  # Frontend Service
+  - type: web
+    name: readme-maker-ai-frontend
+    env: static
+    plan: free
+    buildCommand: "npm install && npm run build"
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://readme-maker-ai-backend.onrender.com
+      - key: VITE_GITHUB_CLIENT_ID
+        sync: false
