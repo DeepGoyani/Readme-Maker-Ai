@@ -20,8 +20,8 @@ export function authenticateToken(req, res, next) {
 export function generateToken(user) {
   return jwt.sign(
     { 
-      id: user.id, 
-      githubId: user.github_id, 
+      id: user._id, 
+      githubId: user.githubId, 
       username: user.username,
       email: user.email
     },
