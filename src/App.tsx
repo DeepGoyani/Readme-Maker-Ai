@@ -23,6 +23,7 @@ const AppRoutes = () => {
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/callback" element={<Login />} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/dashboard/:repo" element={<ProtectedRoute><RepoDetail /></ProtectedRoute>} />
         <Route path="/generate/:repo" element={<ProtectedRoute><Generate /></ProtectedRoute>} />
