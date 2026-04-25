@@ -1,19 +1,20 @@
 import express from 'express';
 import { authenticateToken } from '../middleware/auth.js';
 import { getUserRepos, getRepoDetails } from '../services/github.js';
+import { User } from '../database.js';
 
 const router = express.Router();
 
 // Get user's GitHub repositories
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    const user = await req.db.get('SELECT * FROM users WHERE id = ?', [req.user.id]);
+    const user = await User.findById(req.user.id);
     
-    if (!user || !user.access_token) {
+    if (!user || !user.accessToken) {
       return res.status(401).json({ error: 'GitHub access token not found' });
     }
 
-    const repos = await getUserRepos(user.access_token);
+    const repos = await getUserRepos(user.accessToken);
     res.json(repos);
   } catch (error) {
     console.error('Error fetching repos:', error.message);
@@ -25,13 +26,13 @@ router.get('/', authenticateToken, async (req, res) => {
 router.get('/:owner/:repo', authenticateToken, async (req, res) => {
   try {
     const { owner, repo } = req.params;
-    const user = await req.db.get('SELECT * FROM users WHERE id = ?', [req.user.id]);
+    const user = await User.findById(req.user.id);
     
-    if (!user || !user.access_token) {
+    if (!user || !user.accessToken) {
       return res.status(401).json({ error: 'GitHub access token not found' });
     }
 
-    const repoDetails = await getRepoDetails(user.access_token, owner, repo);
+    const repoDetails = await getRepoDetails(user.accessToken, owner, repo);
     res.json(repoDetails);
   } catch (error) {
     console.error('Error fetching repo details:', error.message);
