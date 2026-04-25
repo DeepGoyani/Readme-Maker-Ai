@@ -36,17 +36,15 @@ export const authAPI = {
   getMe: () => fetchWithAuth('/auth/me'),
   
   logout: async () => {
-    const response = await fetchWithAuth('/auth/logout', {
+    return fetchWithAuth('/auth/logout', {
       method: 'POST'
     });
-    return response.json();
   },
 
   getProfileReadme: async () => {
-    const response = await fetchWithAuth('/auth/profile-readme', {
+    return fetchWithAuth('/auth/profile-readme', {
       method: 'GET'
     });
-    return response.json();
   },
 };
 

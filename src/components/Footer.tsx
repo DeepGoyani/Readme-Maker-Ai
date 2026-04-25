@@ -10,10 +10,7 @@ const Footer = () => (
           ReadMe<span className="gradient-text">AI</span>
         </span>
       </Link>
-      <p className="text-sm text-muted-foreground">
-        © {new Date().getFullYear()} ReadMeAI. Built with AI & ❤️
-      </p>
-      <a
+            <a
         href="https://github.com"
         target="_blank"
         rel="noopener noreferrer"
