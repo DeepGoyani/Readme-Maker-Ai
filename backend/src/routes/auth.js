@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import { exchangeGitHubCode, getGitHubUser } from '../services/github.js';
-import { generateToken } from '../middleware/auth.js';
+import { exchangeGitHubCode, getGitHubUser, getUserProfile, generateProfileReadme } from '../services/github.js';
+import { generateToken, authenticateToken } from '../middleware/auth.js';
 import { User } from '../database.js';
 
 const router = express.Router();
@@ -92,6 +92,31 @@ router.get('/me', async (req, res) => {
 
 router.post('/logout', (req, res) => {
   res.json({ message: 'Logged out successfully' });
+});
+
+// Generate profile README
+router.get('/profile-readme', authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    
+    if (!user || !user.accessToken) {
+      return res.status(401).json({ error: 'GitHub access token not found' });
+    }
+
+    // Fetch comprehensive user profile
+    const userProfile = await getUserProfile(user.accessToken);
+    
+    // Generate professional README
+    const readmeContent = generateProfileReadme(userProfile);
+
+    res.json({
+      profile: userProfile,
+      readme: readmeContent
+    });
+  } catch (error) {
+    console.error('Profile README generation error:', error.message);
+    res.status(500).json({ error: 'Failed to generate profile README', message: error.message });
+  }
 });
 
 export default router;
