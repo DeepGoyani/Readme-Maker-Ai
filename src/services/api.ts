@@ -1,4 +1,4 @@
-const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5003/api';
 
 async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
   const token = localStorage.getItem('token');
@@ -35,7 +35,19 @@ export const authAPI = {
   
   getMe: () => fetchWithAuth('/auth/me'),
   
-  logout: () => fetchWithAuth('/auth/logout', { method: 'POST' }),
+  logout: async () => {
+    const response = await fetchWithAuth('/auth/logout', {
+      method: 'POST'
+    });
+    return response.json();
+  },
+
+  getProfileReadme: async () => {
+    const response = await fetchWithAuth('/auth/profile-readme', {
+      method: 'GET'
+    });
+    return response.json();
+  },
 };
 
 // Repos API
