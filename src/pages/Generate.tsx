@@ -11,10 +11,11 @@ import {
 } from "lucide-react";
 
 type TabType = "raw" | "preview";
-type TemplateType = "modern" | "minimal" | "detailed";
+type TemplateType = "modern" | "minimal" | "detailed" | "premium";
 
 const Generate = () => {
   const { repo } = useParams<{ repo: string }>();
+  const decodedRepo = repo ? decodeURIComponent(repo) : "";
   const [activeTab, setActiveTab] = useState<TabType>("raw");
   const [template, setTemplate] = useState<TemplateType>("modern");
   const [markdown, setMarkdown] = useState<string>("");
@@ -26,13 +27,13 @@ const Generate = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   const regenerateGuard = useRef(false);
 
-  const [owner, repoName] = (repo || "").split("/");
+  const [owner, repoName] = decodedRepo.split("/");
 
   useEffect(() => {
     if (owner && repoName) {
       handleGenerate();
     }
-  }, [owner, repoName]);
+  }, [owner, repoName, decodedRepo]);
 
   const handleGenerate = async () => {
     if (!owner || !repoName) return;
@@ -155,7 +156,7 @@ const Generate = () => {
                 <ArrowLeft className="w-4 h-4" /> Back to Dashboard
               </Link>
               <h1 className="font-display text-2xl font-bold text-foreground">
-                {repoName}/README.md
+                {decodedRepo}/README.md
               </h1>
               <p className="text-sm text-muted-foreground">AI-powered README generation</p>
             </div>
@@ -166,18 +167,19 @@ const Generate = () => {
                   { key: "modern" as TemplateType, label: "Modern" },
                   { key: "minimal" as TemplateType, label: "Minimal" },
                   { key: "detailed" as TemplateType, label: "Detailed" },
-                ].map((t) => (
+                  { key: "premium" as TemplateType, label: "👑 Premium" },
+                ].map(({ key, label }) => (
                   <button
-                    key={t.key}
-                    onClick={() => handleTemplateChange(t.key)}
+                    key={key}
+                    onClick={() => handleTemplateChange(key)}
                     disabled={isGenerating || isRegenerating}
                     className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 ${
-                      template === t.key
+                      template === key
                         ? "bg-primary text-primary-foreground shadow-sm"
                         : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
-                    {t.label}
+                    {label}
                   </button>
                 ))}
               </div>
