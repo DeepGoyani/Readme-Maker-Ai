@@ -2,27 +2,46 @@
 const GEMINI_API_KEY = 'AIzaSyDaORd4QK-SPeVbtId_0ujR2VcJvsv5XDA';
 
 async function callGeminiAPI(prompt) {
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      contents: [{
-        parts: [{
-          text: prompt
-        }]
-      }]
-    })
-  });
-  
-  const data = await response.json();
-  
-  if (data.candidates && data.candidates[0]) {
-    return data.candidates[0].content.parts[0].text;
+  try {
+    console.log('Calling Gemini API...');
+    
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: prompt
+          }]
+        }],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 2500,
+        }
+      })
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Gemini API Error Response:', errorText);
+      throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
+    }
+    
+    const data = await response.json();
+    console.log('Gemini API Response:', JSON.stringify(data, null, 2));
+    
+    if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
+      return data.candidates[0].content.parts[0].text;
+    }
+    
+    console.error('Invalid Gemini API response structure:', data);
+    throw new Error('Invalid response structure from Gemini API');
+  } catch (error) {
+    console.error('Gemini API call failed:', error.message);
+    throw error;
   }
-  
-  throw new Error('Failed to generate content');
 }
 
 // Template structures - completely different for each type
@@ -165,84 +184,132 @@ function generateFallbackReadme(repoData, template) {
     case 'modern':
       return `# 🚀 ${name}
 
-<p align="center">
-  <img src="https://img.shields.io/badge/stars-${stars}-brightgreen?style=for-the-badge&logo=github" alt="Stars">
-  <img src="https://img.shields.io/badge/forks-${forks}-blue?style=for-the-badge&logo=github" alt="Forks">
-  <img src="https://img.shields.io/badge/license-MIT-purple?style=for-the-badge" alt="License">
-  <img src="https://img.shields.io/badge/version-1.0.0-orange?style=for-the-badge" alt="Version">
-</p>
+<div align="center">
 
-<p align="center">
-  <strong>${description || 'A cutting-edge modern application built with the latest technologies and best practices.'}</strong>
-</p>
+## 🌟 A Stunning Modern Application
 
-<p align="center">
-  <a href="#-features">✨ Features</a> •
-  <a href="#-tech-stack">🛠️ Tech Stack</a> •
-  <a href="#-quick-start">🚀 Quick Start</a> •
-  <a href="#-demo">📸 Demo</a> •
-  <a href="#-contributing">🤝 Contributing</a>
-</p>
+[![Stars](https://img.shields.io/github/stars/username/${name}?style=for-the-badge&logo=github&logoColor=white&labelColor=1a1a1a&color=ff6b6b)](https://github.com/username/${name})
+[![Forks](https://img.shields.io/github/forks/username/${name}?style=for-the-badge&logo=github&logoColor=white&labelColor=1a1a1a&color=4ecdc4)](https://github.com/username/${name}/network)
+[![Issues](https://img.shields.io/github/issues/username/${name}?style=for-the-badge&logo=github&logoColor=white&labelColor=1a1a1a&color=45b7d1)](https://github.com/username/${name}/issues)
+[![License](https://img.shields.io/github/license/username/${name}?style=for-the-badge&logo=github&logoColor=white&labelColor=1a1a1a&color=9b59b6)](https://github.com/username/${name}/blob/main/LICENSE)
+[![Version](https://img.shields.io/github/v/release/username/${name}?style=for-the-badge&logo=github&logoColor=white&labelColor=1a1a1a&color=f39c12)](https://github.com/username/${name}/releases)
+
+---
+
+### 💎 **${description || 'Experience the future of web development with this cutting-edge application'}**
+
+---
+
+## 📋 Table of Contents
+
+- [✨ Features](#-features)
+- [🛠️ Tech Stack](#️-tech-stack)
+- [� Quick Start](#-quick-start)
+- [� Documentation](#-documentation)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+- [🙏 Acknowledgments](#-acknowledgments)
 
 ---
 
 ## ✨ Features
 
-### 🎯 Core Features
-- **🚀 Lightning Fast** - Optimized for maximum performance and speed
-- **🎨 Beautiful UI** - Modern, intuitive design with smooth animations
-- **📱 Fully Responsive** - Perfect experience on all devices and screen sizes
-- **🔧 Easy Setup** - Get up and running in minutes with simple configuration
-- **🛡️ Secure by Default** - Built with security best practices and modern standards
-- **🔄 Auto Updates** - Smart update system keeping everything current
+### 🎯 **Core Features**
+<table>
+<tr>
+<td width="50%">
 
-### 🌟 Advanced Features
-- **⚡ Real-time Sync** - Instant data synchronization across all devices
-- **🧠 Smart Algorithms** - AI-powered features for enhanced user experience
-- **🌍 Internationalization** - Multi-language support with i18n
-- **📊 Analytics Dashboard** - Comprehensive insights and monitoring
-- **🔌 Plugin System** - Extensible architecture with third-party integrations
-- **🎯 Smart Caching** - Intelligent caching for optimal performance
+#### 🚀 **Blazing Fast Performance**
+- ⚡ Lightning-fast load times
+- 🔄 Real-time updates
+- 📱 Optimized for all devices
+- 🎯 99.9% uptime guarantee
+
+</td>
+<td width="50%">
+
+#### 🎨 **Stunning User Interface**
+- � Beautiful modern design
+- 🎭 Smooth animations
+- � Perfect responsive layout
+- 🌙 Dark/Light mode support
+
+</td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td width="50%">
+
+#### 🔧 **Developer Friendly**
+- 📚 Comprehensive documentation
+- 🧪 Easy testing setup
+- 🔍 Code quality tools
+- 🚀 CI/CD pipeline ready
+
+</td>
+<td width="50%">
+
+#### 🛡️ **Enterprise Security**
+- 🔒 End-to-end encryption
+- 🛡️ Security best practices
+- � Authentication system
+- 📊 Audit logging
+
+</td>
+</tr>
+</table>
+
+### 🌟 **Advanced Features**
+<div align="center">
+
+| Feature | Description | Status |
+|---------|-------------|--------|
+| � **AI Integration** | Smart automation features | ✅ Active |
+| 📊 **Analytics** | Real-time data insights | ✅ Active |
+| 🔌 **Plugin System** | Extensible architecture | 🚧 In Progress |
+| � **Multi-language** | Internationalization support | 📋 Planned |
+
+</div>
 
 ---
 
 ## 🛠️ Tech Stack
 
-### 💻 Frontend
-\`\`\`
-${language || 'TypeScript'} + React + Next.js
-Tailwind CSS + Framer Motion
-Zustand + React Query
+<div align="center">
+
+### 💻 **Frontend Technologies**
+\`\`\`typescript
+${language || 'TypeScript'} • React • Next.js
+Tailwind CSS • Framer Motion • Zustand
+React Query • Axios • Vite
 \`\`\`
 
-### 🗄️ Backend
-\`\`\`
-Node.js + Express + MongoDB
-Redis + JWT Authentication
-Socket.io + REST APIs
-\`\`\`
-
-### 🛠️ DevOps
-\`\`\`
-Docker + GitHub Actions
-AWS + Vercel + MongoDB Atlas
-ESLint + Prettier + Husky
+### 🗄️ **Backend Technologies**
+\`\`\`typescript
+Node.js • Express • MongoDB
+Redis • JWT • Socket.io
+Docker • AWS • GitHub Actions
 \`\`\`
 
-<p align="center">
-  <img src="https://skillicons.dev/icons?i=${language?.toLowerCase() || 'javascript'},nodejs,react,tailwind,mongodb,redis,docker,aws,github" alt="Tech Stack">
-</p>
+</div>
+
+<div align="center">
+
+## 🎨 **Technology Icons**
+
+[![My Skills](https://skillicons.dev/icons?i=${language?.toLowerCase() || 'javascript'},react,nextjs,tailwind,nodejs,express,mongodb,redis,docker,aws,github,vscode,git,postman&perline=10)](https://skillicons.dev)
+
+</div>
 
 ---
 
 ## 🚀 Quick Start
 
-### 📦 Prerequisites
-- Node.js 18.0+ and npm 8.0+
-- Git 2.30+ for version control
-- MongoDB 5.0+ (or MongoDB Atlas)
+### 📦 **Installation**
 
-### ⚡ Installation
+<div align="center">
 
 \`\`\`bash
 # 🔄 Clone the repository
@@ -252,114 +319,169 @@ cd ${name}
 # 📦 Install dependencies
 npm install
 
-# 🔧 Set up environment variables
+# 🔧 Copy environment variables
 cp .env.example .env
-# Edit .env with your configuration
 
-# 🗄️ Set up database
-npm run db:setup
-
-# 🚀 Start development server
+#  Start development server
 npm run dev
 \`\`\`
 
-### 🎯 Quick Commands
+</div>
 
-\`\`\`bash
-npm run dev      # Start development server
-npm run build    # Build for production
-npm run test     # Run test suite
-npm run lint     # Check code quality
-npm run deploy   # Deploy to production
-\`\`\`
+### 🎯 **Available Scripts**
 
----
+<div align="center">
 
-## 📸 Demo
+| Command | Description |
+|---------|-------------|
+| \`npm run dev\` | 🚀 Start development server |
+| \`npm run build\` | 🏗️ Build for production |
+| \`npm run test\` | 🧪 Run test suite |
+| \`npm run lint\` | 🔍 Check code quality |
+| \`npm run deploy\` | 🌐 Deploy to production |
 
-### 🌟 Live Demo
-- **🌐 Production**: [https://${name.toLowerCase()}.vercel.app](https://${name.toLowerCase()}.vercel.app)
-- **🧪 Sandbox**: [https://${name.toLowerCase()}-staging.vercel.app](https://${name.toLowerCase()}-staging.vercel.app)
-
-### 📱 Screenshots
-
-<p align="center">
-  <img src="https://via.placeholder.com/800x400/4F46E5/FFFFFF?text=🎨+Modern+Dashboard+UI" alt="Dashboard">
-  <img src="https://via.placeholder.com/800x400/10B981/FFFFFF?text=📱+Mobile+Responsive+Design" alt="Mobile">
-</p>
-
-<p align="center">
-  <img src="https://via.placeholder.com/800x400/F59E0B/FFFFFF?text=⚡+Performance+Analytics" alt="Analytics">
-  <img src="https://via.placeholder.com/800x400/EF4444/FFFFFF?text=🔧+Settings+Panel" alt="Settings">
-</p>
+</div>
 
 ---
 
-## 📊 Project Stats
+## � Documentation
 
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=username&repo=${name}&show_icons=true&theme=radical" alt="Stats">
-</p>
+<div align="center">
 
-<p align="center">
-  <img src="https://github-readme-activity-graph.vercel.app/graph?username=username&repo=${name}&theme=radical" alt="Activity">
-</p>
+### 📚 **Comprehensive Guides**
+
+- 📖 [Getting Started](docs/getting-started.md)
+- 🎨 [UI Components](docs/components.md)
+- 🔧 [API Reference](docs/api.md)
+- 🚀 [Deployment Guide](docs/deployment.md)
+- 🤝 [Contributing Guide](docs/contributing.md)
+
+</div>
+
+---
+
+## 📸 **Screenshots & Demo**
+
+<div align="center">
+
+### 🌟 **Live Demo**
+🔗 **[🌐 Live Demo](https://${name.toLowerCase()}.vercel.app)** • **[🧪 Sandbox](https://${name.toLowerCase()}-staging.vercel.app)**
+
+</div>
+
+<div align="center">
+
+### 📱 **Application Preview**
+
+<table>
+<tr>
+<td width="50%">
+<img src="https://via.placeholder.com/400x250/667eea/FFFFFF?text=🎨+Modern+Dashboard" alt="Dashboard">
+</td>
+<td width="50%">
+<img src="https://via.placeholder.com/400x250/48bb78/FFFFFF?text=📱+Mobile+View" alt="Mobile">
+</td>
+</tr>
+<tr>
+<td width="50%">
+<img src="https://via.placeholder.com/400x250/ed8936/FFFFFF?text=⚡+Analytics+Panel" alt="Analytics">
+</td>
+<td width="50%">
+<img src="https://via.placeholder.com/400x250/e53e3e/FFFFFF?text=🔧+Settings+Page" alt="Settings">
+</td>
+</tr>
+</table>
+
+</div>
+
+---
+
+## 📊 **Project Statistics**
+
+<div align="center">
+
+### 📈 **GitHub Stats**
+
+[![GitHub Stats](https://github-readme-stats.vercel.app/api?username=username&repo=${name}&show_icons=true&theme=radical&hide_border=true&bg_color=1a1a1a&title_color=ffffff&text_color=ffffff&icon_color=ff6b6b)](https://github.com/username/${name})
+
+### 🎯 **Activity Graph**
+
+[![Activity Graph](https://github-readme-activity-graph.vercel.app/graph?username=username&repo=${name}&theme=radical&hide_border=true&bg_color=1a1a1a&color=ff6b6b&line=4ecdc4&point=45b7d1)](https://github.com/username/${name})
+
+</div>
 
 ---
 
 ## 🤝 Contributing
 
-We ❤️ contributions! Here's how you can help:
+<div align="center">
 
-### 🌟 Ways to Contribute
-- 🐛 **Report Bugs** - Found an issue? Please report it!
-- 💡 **Feature Requests** - Have an idea? We'd love to hear it!
-- 🔧 **Pull Requests** - Submit code changes and improvements
-- 📖 **Documentation** - Help improve docs and examples
-- 🎨 **Design** - Contribute to UI/UX improvements
-
-### 📋 Contributing Guidelines
+### 🌟 **How to Contribute**
 
 1. 🍴 **Fork** the repository
 2. 🌿 **Create** a feature branch: \`git checkout -b feature/amazing-feature\`
-3. 💾 **Commit** your changes: \`git commit -m 'Add amazing feature'\`
+3. 💾 **Commit** your changes: \`git commit -m '✨ Add amazing feature'\`
 4. 📤 **Push** to the branch: \`git push origin feature/amazing-feature\`
 5. 🔄 **Open** a Pull Request
 
-### 🎯 Code Standards
-- Follow ESLint and Prettier configurations
-- Write meaningful commit messages
-- Add tests for new features
-- Update documentation when needed
+### 🎯 **Guidelines**
 
----
+- 📝 Follow the code style
+- 🧪 Add tests for new features
+- 📖 Update documentation
+- � Keep it clean and simple
 
-## 🏆 Acknowledgments
-
-- 🙏 **Contributors** - Amazing people who made this project possible
-- 📚 **Libraries** - Open source packages that power this application
-- 🎨 **Design** - Inspiration from the open source community
-- 🚀 **Deployments** - Special thanks to our hosting providers
+</div>
 
 ---
 
 ## 📄 License
 
-<p align="center">
-  <img src="https://img.shields.io/badge/license-MIT-blue?style=for-the-badge" alt="License">
-</p>
+<div align="center">
+
+[![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge&logo=github&logoColor=white)](https://github.com/username/${name}/blob/main/LICENSE)
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+</div>
+
 ---
 
-<p align="center">
-  <strong>⭐ If you like this project, please give it a star! ⭐</strong>
-</p>
+## 🙏 Acknowledgments
 
-<p align="center">
-  Made with ❤️ by the ${name} team
-</p>`;
+<div align="center">
+
+### 🌟 **Special Thanks**
+
+- 🙏 **Contributors** - Amazing developers who made this possible
+- 📚 **Open Source** - The community that inspires us
+- 🎨 **Designers** - Creative minds behind the UI/UX
+- 🚀 **Deployments** - Services that keep us running
+
+### 💝 **Support**
+
+If you find this project helpful, please consider:
+
+- ⭐ **Starring** this repository
+- 🐛 **Reporting** issues and bugs
+- 💡 **Suggesting** new features
+- 📢 **Sharing** with others
+
+</div>
+
+---
+
+<div align="center">
+
+## 🎉 **Thank You for Visiting!**
+
+Made with ❤️ and ☕ by the [${name} Team](https://github.com/username/${name})
+
+[![Profile Views](https://komarev.com/ghpvc/?username=username&repo=${name}&style=for-the-badge&color=ff6b6b)](https://github.com/username/${name})
+
+</div>
+
+</div>`;
 
     case 'minimal':
       return `# ${name}
