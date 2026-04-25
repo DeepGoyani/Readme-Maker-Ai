@@ -82,7 +82,9 @@ Template Configuration:
 - Max Length: ${templateConfig.maxLength} words
 
 CRITICAL: Generate content SPECIFICALLY for the ${template.toUpperCase()} template using ONLY the sections listed. Each template must be UNIQUE in structure and content.
-- MODERN: Use hero, badges, features, tech-stack, quick-start sections
+
+TEMPLATE-SPECIFIC INSTRUCTIONS:
+- MODERN: Create a VISUALLY STUNNING README with center-aligned badges, modern emojis, tech stack icons, GitHub stats, activity graphs, and professional formatting. Use modern markdown features like tables, code blocks with syntax highlighting, and center alignment.
 - MINIMAL: Use only title, description, install, usage - maximum 200 words
 - DETAILED: Use all technical sections with comprehensive explanations
 - PREMIUM: Use enterprise sections with business focus
@@ -111,7 +113,9 @@ Template Configuration:
 - Max Length: ${templateConfig.maxLength} words
 
 CRITICAL: Generate content SPECIFICALLY for the ${template.toUpperCase()} template using ONLY the sections listed. Each template must be UNIQUE in structure and content.
-- MODERN: Use hero, badges, features, tech-stack, quick-start sections
+
+TEMPLATE-SPECIFIC INSTRUCTIONS:
+- MODERN: Create a VISUALLY STUNNING README with center-aligned badges, modern emojis, tech stack icons, GitHub stats, activity graphs, and professional formatting. Use modern markdown features like tables, code blocks with syntax highlighting, and center alignment.
 - MINIMAL: Use only title, description, install, usage - maximum 200 words
 - DETAILED: Use all technical sections with comprehensive explanations
 - PREMIUM: Use enterprise sections with business focus
@@ -139,53 +143,203 @@ function generateFallbackReadme(repoData, template) {
   
   switch(template) {
     case 'modern':
-      return `# ${name}
+      return `# 🚀 ${name}
 
-![GitHub stars](https://img.shields.io/badge/stars-${stars}-blue) ![GitHub forks](https://img.shields.io/badge/forks-${forks}-green) ![License](https://img.shields.io/badge/license-MIT-orange)
+<p align="center">
+  <img src="https://img.shields.io/badge/stars-${stars}-brightgreen?style=for-the-badge&logo=github" alt="Stars">
+  <img src="https://img.shields.io/badge/forks-${forks}-blue?style=for-the-badge&logo=github" alt="Forks">
+  <img src="https://img.shields.io/badge/license-MIT-purple?style=for-the-badge" alt="License">
+  <img src="https://img.shields.io/badge/version-1.0.0-orange?style=for-the-badge" alt="Version">
+</p>
 
-> ${description || 'A modern, professional project built with cutting-edge technology.'}
+<p align="center">
+  <strong>${description || 'A cutting-edge modern application built with the latest technologies and best practices.'}</strong>
+</p>
+
+<p align="center">
+  <a href="#-features">✨ Features</a> •
+  <a href="#-tech-stack">🛠️ Tech Stack</a> •
+  <a href="#-quick-start">🚀 Quick Start</a> •
+  <a href="#-demo">📸 Demo</a> •
+  <a href="#-contributing">🤝 Contributing</a>
+</p>
+
+---
 
 ## ✨ Features
 
-- 🚀 **Modern Architecture** - Built with the latest technologies
-- 🎨 **Beautiful Design** - Clean, intuitive user interface
-- ⚡ **High Performance** - Optimized for speed and efficiency
-- 🔧 **Easy Configuration** - Simple setup and customization
-- 📱 **Responsive** - Works perfectly on all devices
-- 🛡️ **Secure** - Built with security best practices
+### 🎯 Core Features
+- **🚀 Lightning Fast** - Optimized for maximum performance and speed
+- **🎨 Beautiful UI** - Modern, intuitive design with smooth animations
+- **📱 Fully Responsive** - Perfect experience on all devices and screen sizes
+- **🔧 Easy Setup** - Get up and running in minutes with simple configuration
+- **🛡️ Secure by Default** - Built with security best practices and modern standards
+- **🔄 Auto Updates** - Smart update system keeping everything current
+
+### 🌟 Advanced Features
+- **⚡ Real-time Sync** - Instant data synchronization across all devices
+- **🧠 Smart Algorithms** - AI-powered features for enhanced user experience
+- **🌍 Internationalization** - Multi-language support with i18n
+- **📊 Analytics Dashboard** - Comprehensive insights and monitoring
+- **🔌 Plugin System** - Extensible architecture with third-party integrations
+- **🎯 Smart Caching** - Intelligent caching for optimal performance
+
+---
 
 ## 🛠️ Tech Stack
 
-| Technology | Version | Description |
-|------------|---------|-------------|
-| ${language || 'JavaScript'} | Latest | Primary development language |
-| Node.js | v18+ | Runtime environment |
-| Git | v2.30+ | Version control |
+### 💻 Frontend
+\`\`\`
+${language || 'TypeScript'} + React + Next.js
+Tailwind CSS + Framer Motion
+Zustand + React Query
+\`\`\`
+
+### 🗄️ Backend
+\`\`\`
+Node.js + Express + MongoDB
+Redis + JWT Authentication
+Socket.io + REST APIs
+\`\`\`
+
+### 🛠️ DevOps
+\`\`\`
+Docker + GitHub Actions
+AWS + Vercel + MongoDB Atlas
+ESLint + Prettier + Husky
+\`\`\`
+
+<p align="center">
+  <img src="https://skillicons.dev/icons?i=${language?.toLowerCase() || 'javascript'},nodejs,react,tailwind,mongodb,redis,docker,aws,github" alt="Tech Stack">
+</p>
+
+---
 
 ## 🚀 Quick Start
 
-\`\`\`bash
-# Clone the repository
-git clone https://github.com/username/${name}.git
+### 📦 Prerequisites
+- Node.js 18.0+ and npm 8.0+
+- Git 2.30+ for version control
+- MongoDB 5.0+ (or MongoDB Atlas)
 
-# Install dependencies
+### ⚡ Installation
+
+\`\`\`bash
+# 🔄 Clone the repository
+git clone https://github.com/username/${name}.git
+cd ${name}
+
+# 📦 Install dependencies
 npm install
 
-# Start the application
+# 🔧 Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration
+
+# 🗄️ Set up database
+npm run db:setup
+
+# 🚀 Start development server
 npm run dev
 \`\`\`
 
+### 🎯 Quick Commands
+
+\`\`\`bash
+npm run dev      # Start development server
+npm run build    # Build for production
+npm run test     # Run test suite
+npm run lint     # Check code quality
+npm run deploy   # Deploy to production
+\`\`\`
+
+---
+
 ## 📸 Demo
 
-![Demo](https://via.placeholder.com/600x300?text=Demo+Screenshot)
+### 🌟 Live Demo
+- **🌐 Production**: [https://${name.toLowerCase()}.vercel.app](https://${name.toLowerCase()}.vercel.app)
+- **🧪 Sandbox**: [https://${name.toLowerCase()}-staging.vercel.app](https://${name.toLowerCase()}-staging.vercel.app)
+
+### 📱 Screenshots
+
+<p align="center">
+  <img src="https://via.placeholder.com/800x400/4F46E5/FFFFFF?text=🎨+Modern+Dashboard+UI" alt="Dashboard">
+  <img src="https://via.placeholder.com/800x400/10B981/FFFFFF?text=📱+Mobile+Responsive+Design" alt="Mobile">
+</p>
+
+<p align="center">
+  <img src="https://via.placeholder.com/800x400/F59E0B/FFFFFF?text=⚡+Performance+Analytics" alt="Analytics">
+  <img src="https://via.placeholder.com/800x400/EF4444/FFFFFF?text=🔧+Settings+Panel" alt="Settings">
+</p>
+
+---
+
+## 📊 Project Stats
+
+<p align="center">
+  <img src="https://github-readme-stats.vercel.app/api?username=username&repo=${name}&show_icons=true&theme=radical" alt="Stats">
+</p>
+
+<p align="center">
+  <img src="https://github-readme-activity-graph.vercel.app/graph?username=username&repo=${name}&theme=radical" alt="Activity">
+</p>
+
+---
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+We ❤️ contributions! Here's how you can help:
+
+### 🌟 Ways to Contribute
+- 🐛 **Report Bugs** - Found an issue? Please report it!
+- 💡 **Feature Requests** - Have an idea? We'd love to hear it!
+- 🔧 **Pull Requests** - Submit code changes and improvements
+- 📖 **Documentation** - Help improve docs and examples
+- 🎨 **Design** - Contribute to UI/UX improvements
+
+### 📋 Contributing Guidelines
+
+1. 🍴 **Fork** the repository
+2. 🌿 **Create** a feature branch: \`git checkout -b feature/amazing-feature\`
+3. 💾 **Commit** your changes: \`git commit -m 'Add amazing feature'\`
+4. 📤 **Push** to the branch: \`git push origin feature/amazing-feature\`
+5. 🔄 **Open** a Pull Request
+
+### 🎯 Code Standards
+- Follow ESLint and Prettier configurations
+- Write meaningful commit messages
+- Add tests for new features
+- Update documentation when needed
+
+---
+
+## 🏆 Acknowledgments
+
+- 🙏 **Contributors** - Amazing people who made this project possible
+- 📚 **Libraries** - Open source packages that power this application
+- 🎨 **Design** - Inspiration from the open source community
+- 🚀 **Deployments** - Special thanks to our hosting providers
+
+---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.`;
+<p align="center">
+  <img src="https://img.shields.io/badge/license-MIT-blue?style=for-the-badge" alt="License">
+</p>
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+<p align="center">
+  <strong>⭐ If you like this project, please give it a star! ⭐</strong>
+</p>
+
+<p align="center">
+  Made with ❤️ by the ${name} team
+</p>`;
 
     case 'minimal':
       return `# ${name}
