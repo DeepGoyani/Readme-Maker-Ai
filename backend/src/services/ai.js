@@ -53,6 +53,18 @@ const TEMPLATE_STRUCTURES = {
   }
 };
 
+// Template validation function
+function validateTemplateContent(content, template) {
+  const checks = {
+    modern: content.includes('✨') && content.includes('🛠️') && content.includes('🚀'),
+    minimal: content.length < 500 && !content.includes('## ') && !content.includes('### '),
+    detailed: content.includes('## Table of Contents') && content.includes('## Architecture') && content.includes('## API Documentation'),
+    premium: content.includes('## Executive Summary') && content.includes('## Feature Matrix') && content.includes('## SLA & Support')
+  };
+  
+  return checks[template] || false;
+}
+
 export async function generateReadme(repoData, template = 'modern') {
   try {
     const templateConfig = TEMPLATE_STRUCTURES[template] || TEMPLATE_STRUCTURES.modern;
@@ -84,10 +96,10 @@ Template Configuration:
 CRITICAL: Generate content SPECIFICALLY for the ${template.toUpperCase()} template using ONLY the sections listed. Each template must be UNIQUE in structure and content.
 
 TEMPLATE-SPECIFIC INSTRUCTIONS:
-- MODERN: Create a VISUALLY STUNNING README with center-aligned badges, modern emojis, tech stack icons, GitHub stats, activity graphs, and professional formatting. Use modern markdown features like tables, code blocks with syntax highlighting, and center alignment.
-- MINIMAL: Use only title, description, install, usage - maximum 200 words
-- DETAILED: Use all technical sections with comprehensive explanations
-- PREMIUM: Use enterprise sections with business focus
+- MODERN: Create a VISUALLY STUNNING README with center-aligned badges, modern emojis, tech stack icons, GitHub stats, activity graphs, and professional formatting. Use modern markdown features like tables, code blocks with syntax highlighting, and center alignment. MUST INCLUDE: hero section, badges, features, tech-stack, quick-start, demo, contributing.
+- MINIMAL: Create an ULTRA-MINIMAL README with ONLY: title, description, install, usage. Maximum 200 words. NO extra sections, NO badges, NO tables, NO complex formatting. MUST BE BARE MINIMUM.
+- DETAILED: Create a COMPREHENSIVE README with ALL technical sections: header, toc, overview, architecture, api, setup, deployment, testing, troubleshooting, contributing, license. MUST BE THOROUGH and TECHNICAL.
+- PREMIUM: Create an ENTERPRISE-GRADE README with business focus: executive summary, branding, value proposition, feature matrix, specifications, performance, security, enterprise deployment, monitoring, sla, testimonials, roadmap, contact. MUST BE CORPORATE STYLE.
 
 Generate ONLY the README content as raw markdown. Do not wrap in code blocks. Make it professional and engaging.`;
 
@@ -115,16 +127,24 @@ Template Configuration:
 CRITICAL: Generate content SPECIFICALLY for the ${template.toUpperCase()} template using ONLY the sections listed. Each template must be UNIQUE in structure and content.
 
 TEMPLATE-SPECIFIC INSTRUCTIONS:
-- MODERN: Create a VISUALLY STUNNING README with center-aligned badges, modern emojis, tech stack icons, GitHub stats, activity graphs, and professional formatting. Use modern markdown features like tables, code blocks with syntax highlighting, and center alignment.
-- MINIMAL: Use only title, description, install, usage - maximum 200 words
-- DETAILED: Use all technical sections with comprehensive explanations
-- PREMIUM: Use enterprise sections with business focus
+- MODERN: Create a VISUALLY STUNNING README with center-aligned badges, modern emojis, tech stack icons, GitHub stats, activity graphs, and professional formatting. Use modern markdown features like tables, code blocks with syntax highlighting, and center alignment. MUST INCLUDE: hero section, badges, features, tech-stack, quick-start, demo, contributing.
+- MINIMAL: Create an ULTRA-MINIMAL README with ONLY: title, description, install, usage. Maximum 200 words. NO extra sections, NO badges, NO tables, NO complex formatting. MUST BE BARE MINIMUM.
+- DETAILED: Create a COMPREHENSIVE README with ALL technical sections: header, toc, overview, architecture, api, setup, deployment, testing, troubleshooting, contributing, license. MUST BE THOROUGH and TECHNICAL.
+- PREMIUM: Create an ENTERPRISE-GRADE README with business focus: executive summary, branding, value proposition, feature matrix, specifications, performance, security, enterprise deployment, monitoring, sla, testimonials, roadmap, contact. MUST BE CORPORATE STYLE.
 
 Generate ONLY the README content as raw markdown. Do not wrap in code blocks. Make it professional and engaging.`;
 
     try {
       const content = await callGeminiAPI(userPrompt);
-      return content.trim();
+      const trimmedContent = content.trim();
+      
+      // Validate template content
+      if (!validateTemplateContent(trimmedContent, template)) {
+        console.warn(`Generated content doesn't match ${template} template, using fallback`);
+        return generateFallbackReadme(repoData, template);
+      }
+      
+      return trimmedContent;
     } catch (error) {
       console.error('Gemini API error:', error.message);
       throw error;
