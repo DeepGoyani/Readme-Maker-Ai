@@ -68,6 +68,12 @@ export const generateAPI = {
       method: 'POST',
       body: JSON.stringify({ content, instructions }),
     }),
+  
+  pushToGitHub: (data: { owner: string; repo: string; content: string; commitMessage?: string }) =>
+    fetchWithAuth('/generate/push-to-github', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
 };
 
 // Readmes API

@@ -1,7 +1,7 @@
 import express from 'express';
 import { authenticateToken } from '../middleware/auth.js';
 import { generateReadme, enhanceReadme } from '../services/ai.js';
-import { getRepoDetails } from '../services/github.js';
+import { getRepoDetails, pushReadmeToGitHub } from '../services/github.js';
 import { User, Readme, GenerationLog } from '../database.js';
 
 const router = express.Router();
@@ -102,6 +102,41 @@ router.post('/enhance', authenticateToken, async (req, res) => {
   } catch (error) {
     console.error('Enhancement error:', error.message);
     res.status(500).json({ error: 'Failed to enhance README' });
+  }
+});
+
+// Push README to GitHub repository
+router.post('/push-to-github', authenticateToken, async (req, res) => {
+  try {
+    const { owner, repo, content, commitMessage } = req.body;
+
+    if (!owner || !repo || !content) {
+      return res.status(400).json({ error: 'Repository owner, name, and content required' });
+    }
+
+    const user = await User.findById(req.user.id);
+    
+    if (!user || !user.accessToken) {
+      return res.status(401).json({ error: 'GitHub access token not found' });
+    }
+
+    const result = await pushReadmeToGitHub(
+      user.accessToken,
+      owner,
+      repo,
+      content,
+      commitMessage || 'Update README with AI-generated content'
+    );
+
+    res.json({
+      success: true,
+      message: 'README successfully pushed to GitHub',
+      commit: result.commit,
+      url: result.url
+    });
+  } catch (error) {
+    console.error('Push to GitHub error:', error.message);
+    res.status(500).json({ error: error.message });
   }
 });
 

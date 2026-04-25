@@ -312,12 +312,63 @@ ${socialSection}
 
 export async function getGitHubUser(accessToken) {
   try {
-    const response = await axios.get(`${GITHUB_API_BASE}/user`, {
-      headers: { Authorization: `token ${accessToken}` }
+    const response = await axios.get('https://api.github.com/user', {
+      headers: {
+        Authorization: `token ${accessToken}`
+      }
     });
+
     return response.data;
   } catch (error) {
     console.error('Error fetching GitHub user:', error.response?.data || error.message);
     throw new Error('Failed to fetch GitHub user');
+  }
+}
+
+// Push README to GitHub repository
+export async function pushReadmeToGitHub(accessToken, owner, repo, readmeContent, commitMessage = 'Update README with AI-generated content') {
+  try {
+    // First, get the current README file SHA (if it exists)
+    const getFileResponse = await axios.get(`https://api.github.com/repos/${owner}/${repo}/contents/README.md`, {
+      headers: {
+        Authorization: `token ${accessToken}`
+      }
+    }).catch(error => {
+      if (error.response?.status === 404) {
+        // File doesn't exist, that's okay
+        return null;
+      }
+      throw error;
+    });
+
+    const fileSHA = getFileResponse?.data?.sha;
+
+    // Encode the README content to base64
+    const encodedContent = Buffer.from(readmeContent).toString('base64');
+
+    // Create or update the README file
+    const response = await axios.put(
+      `https://api.github.com/repos/${owner}/${repo}/contents/README.md`,
+      {
+        message: commitMessage,
+        content: encodedContent,
+        sha: fileSHA
+      },
+      {
+        headers: {
+          Authorization: `token ${accessToken}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    return {
+      success: true,
+      commit: response.data.commit,
+      url: response.data.content.html_url
+    };
+  } catch (error) {
+    console.error('Error pushing README to GitHub:', error.response?.data || error.message);
+    throw new Error('Failed to push README to GitHub: ' + (error.response?.data?.message || error.message));
   }
 }

@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import { ClayCard, ClayInset } from "@/components/clay/ClayComponents";
 import { ScrollReveal } from "@/components/motion/AnimationPrimitives";
 import {
-  ArrowLeft, Copy, Download, Check, Loader2, RefreshCw, Eye, Code2, Sparkles, AlertCircle
+  ArrowLeft, Copy, Download, Check, Loader2, RefreshCw, Eye, Code2, Sparkles, AlertCircle, Github
 } from "lucide-react";
 
 type TabType = "raw" | "preview";
@@ -24,6 +24,8 @@ const Generate = () => {
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [downloadPulse, setDownloadPulse] = useState(false);
+  const [isPushing, setIsPushing] = useState(false);
+  const [pushed, setPushed] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const regenerateGuard = useRef(false);
 
@@ -85,6 +87,29 @@ const Generate = () => {
     setDownloadPulse(true);
     setTimeout(() => setDownloadPulse(false), 1000);
   }, [markdown]);
+
+  const handlePushToGitHub = useCallback(async () => {
+    if (!markdown || !owner || !repoName) return;
+    
+    setIsPushing(true);
+    setError(null);
+
+    try {
+      const result = await generateAPI.pushToGitHub({
+        owner,
+        repo: repoName,
+        content: markdown,
+        commitMessage: `Update README with ${template} template using ReadMeAI`
+      });
+
+      setPushed(true);
+      setTimeout(() => setPushed(false), 3000);
+    } catch (err: any) {
+      setError(err.message || "Failed to push README to GitHub");
+    } finally {
+      setIsPushing(false);
+    }
+  }, [markdown, owner, repoName, template]);
 
   const handleRegenerate = useCallback(async () => {
     if (regenerateGuard.current || !owner || !repoName) return;
@@ -350,6 +375,27 @@ const Generate = () => {
                 aria-label="Download markdown"
               >
                 <Download className="w-4 h-4" /> Download
+              </motion.button>
+
+              {/* Push to GitHub */}
+              <motion.button
+                whileHover={{ scale: (isPushing || isGenerating) ? 1 : 1.05 }}
+                whileTap={{ scale: (isPushing || isGenerating) ? 1 : 0.95 }}
+                onClick={handlePushToGitHub}
+                disabled={isPushing || isGenerating || !markdown}
+                className={`clay-card-sm px-4 py-2 text-sm font-medium inline-flex items-center gap-2 transition-colors ${
+                  pushed ? "text-green-600" : "text-foreground"
+                } disabled:opacity-50`}
+                aria-label="Push to GitHub"
+              >
+                {isPushing ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : pushed ? (
+                  <Check className="w-4 h-4" />
+                ) : (
+                  <Github className="w-4 h-4" />
+                )}
+                {isPushing ? "Pushing..." : pushed ? "Pushed!" : "Push to GitHub"}
               </motion.button>
 
               {/* Regenerate */}
