@@ -5,7 +5,7 @@ async function callGeminiAPI(prompt) {
   try {
     console.log('Calling Gemini API...');
     
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -40,7 +40,8 @@ async function callGeminiAPI(prompt) {
     throw new Error('Invalid response structure from Gemini API');
   } catch (error) {
     console.error('Gemini API call failed:', error.message);
-    throw error;
+    // If Gemini fails, throw the error to trigger fallback
+    throw new Error('Gemini API unavailable, using fallback template');
   }
 }
 
