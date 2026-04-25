@@ -35,6 +35,6 @@ services:
     staticPublishPath: dist
     envVars:
       - key: VITE_API_URL
-        value: https://readme-maker-ai-backend.onrender.com
+        value: https://readme-maker-ai.onrender.com
       - key: VITE_GITHUB_CLIENT_ID
         sync: false

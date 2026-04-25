@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signIn = useCallback(() => {
-    const redirectUri = `http://localhost:8083/callback`;
+    const redirectUri = `${window.location.origin}/callback`;
     const scope = 'read:user repo';
     const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}`;
     console.log('Redirect URI:', redirectUri);
